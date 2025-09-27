@@ -29,8 +29,8 @@ jobs:
         run: flutter pub get
 
       
-      - name: Build web
-        run: flutter build web --release --base-href /responsive_app/ --pwa-strategy=none
+      - name: Build web (HTML renderer)
+        run: flutter build web --release --web-renderer html --base-href /responsive_app/ --pwa-strategy=none
 
       - name: Force correct <base href>
         run: sed -i 's#<base href="[^"]*"#<base href="/responsive_app/"#' build/web/index.html
