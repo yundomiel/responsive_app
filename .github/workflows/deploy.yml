@@ -33,3 +33,4 @@ jobs:
           publish_branch: gh-pages                    
           publish_dir: build/web
           force_orphan: true
+          clean: true
