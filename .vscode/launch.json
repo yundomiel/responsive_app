@@ -10,7 +10,8 @@
       "toolArgs": [
         "-d", "web-server",
         "--web-hostname", "0.0.0.0",
-        "--web-port", "8080"
+        "--web-port", "8080",
+        "--dart-define=FLUTTER_WEB_RENDERER=html"
       ]
     }
   ]
