@@ -17,51 +17,35 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: Pub get
-        run: flutter pub get
+      - run: flutter pub get
 
       
-      - name: Build web (HTML renderer)
-        run: |
-          flutter build web --release \
-          --base-href /responsive_app/ \
-          --pwa-strategy=none \
-            --dart-define=FLUTTER_WEB_RENDERER=htmㅣ
+      - name: Build web (force HTML renderer via env)
+        run: >
+          flutter build web --release
+          --base-href /responsive_app/ --pwa-strategy=none
+          --dart-define=FLUTTER_WEB_RENDERER=html
 
+      
       - name: Force correct <base href>
         run: sed -i 's#<base href="[^"]*"#<base href="/responsive_app/"#' build/web/index.html
 
-     
-      - name: Remove service worker
-        run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
-
-      - name: Disable SW registration in bootstrap
-        run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js
-
-     
-      - name: Add 404.html
-        run: cp build/web/index.html build/web/404.html
-
-   
-      - name: List build output (debug)
-        run: |
-          grep -n "<base" build/web/index.html || true
-          ls -l build/web | sed -n '1,120p'
+      
+      - run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
+      - run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js || true
 
       
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
+      - run: cp build/web/index.html build/web/404.html
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
 
