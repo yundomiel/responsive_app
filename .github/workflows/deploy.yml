@@ -1,8 +1,8 @@
-name: Deploy Flutter Web to gh-packages
+name: Deploy Flutter Web to gh-pages
 
-on: 
+on:
   push:
-    branches: [ main ]
+    branches: [ main ]  
 
 jobs:
   build-and-deploy:
@@ -12,21 +12,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Flotter
-        uses: subosito/flutter/action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
 
       - name: Pub get
         run: flutter pub get
 
-      - name : Build Web
+      - name: Build web
         run: flutter build web --release --base-href /responsive_app/
 
-      - name: Deploy to gh-packages
+      - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}   # 따로 토큰 필요 없음
+          publish_branch: gh-pages                    # ✅ gh-pages (오타 금지)
           publish_dir: build/web
           force_orphan: true
