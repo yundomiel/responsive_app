@@ -17,31 +17,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: Pub get
-        run: flutter pub get
+      - run: flutter pub get
 
-      - name: Build web (no PWA, correct base-href)
-        run: flutter build web --release --base-href /responsive_app/ --pwa-strategy=none
+      
+      - run: flutter build web --release --base-href /responsive_app/ --pwa-strategy=none
 
-      - name: Remove service worker (safety)
-        run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
+      
+      - run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
+      - run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js
+      - run: cp build/web/index.html build/web/404.html
 
-      - name: Patch bootstrap to disable SW registration (safety)
-        run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js
+      
+      - run: |
+          grep -n "<base" build/web/index.html || true
+          ls -l build/web | sed -n '1,80p'
 
-      - name: Add 404.html for SPA routes
-        run: cp build/web/index.html build/web/404.html
+      
+      - uses: actions/configure-pages@v5
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+    
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
 
@@ -52,6 +53,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
