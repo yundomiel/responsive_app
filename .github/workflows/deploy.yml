@@ -18,35 +18,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-
       - run: flutter pub get
-
-    
-      - name: Build web (HTML renderer)
-        run: |
+      - run: |
           flutter build web --release \
             --base-href /responsive_app/ --pwa-strategy=none \
             --dart-define=FLUTTER_WEB_RENDERER=html
-
-      
-      - name: Force correct <base href>
-        run: sed -i 's#<base href="[^"]*"#<base href="/responsive_app/"#' build/web/index.html
-
-      
-      - name: Remove service worker
-        run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
-      - name: Disable SW registration
-        run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js || true
-
-      
-      - name: Add 404.html
-        run: cp build/web/index.html build/web/404.html
-
-      
+      - run: sed -i 's#<base href="[^"]*"#<base href="/responsive_app/"#' build/web/index.html
+      - run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
+      - run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js || true
+      - run: cp build/web/index.html build/web/404.html
+      - run: |
+          awk '1;/<head>/{print "<script>window.addEventListener(\"error\",function(e){var msg=(e.error&&e.error.stack)||e.message;var box=document.createElement(\"pre\");box.style.cssText=\"position:fixed;left:0;right:0;top:0;background:#200;color:#f88;padding:8px;z-index:99999;max-height:50vh;overflow:auto;font:12px/1.4 monospace\";box.textContent=\"JS Error:\\n\"+msg;document.body?document.body.appendChild(box):document.addEventListener(\"DOMContentLoaded\",()=>document.body.appendChild(box));console.error(\"[RuntimeError]\",msg);});</script>"}' build/web/index.html > build/web/index.patched && mv build/web/index.patched build/web/index.html
+      - run: |
+          grep -n "<base" build/web/index.html || true
+          ls -l build/web | sed -n '1,160p'
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
