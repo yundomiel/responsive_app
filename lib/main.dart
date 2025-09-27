@@ -3,10 +3,9 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 
 void main() {
-  runApp(DevicePreview(
-    enabled: !kReleaseMode,
-    builder: (context) => const MyApp(),
-  ));
+  runApp(
+    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +16,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      useInheritedMediaQuery: true,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
 
@@ -25,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-        ),
+      ),
       home: const ProfilePage(),
     );
   }
@@ -41,7 +39,7 @@ class ProfilePage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:[
+          children: [
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.white,
@@ -51,36 +49,32 @@ class ProfilePage extends StatelessWidget {
                   child: Image.asset(
                     'assets/avatar.png',
                     fit: BoxFit.cover,
-                    alignment: const Alignment (0, -0.70),
+                    alignment: const Alignment(0, -0.70),
                     width: 120,
-                    height: 120
-                    
-                    
-                 ),                   
-    ),
-  ),
-),
-            const SizedBox (height: 20),
-            const Text (
-              "Sarah Yoon",
-              style: TextStyle(fontSize:22, fontWeight: FontWeight.w700),
+                    height: 120,
+                  ),
+                ),
+              ),
             ),
-            const SizedBox (height: 8),
-            const Text (
+            const SizedBox(height: 20),
+            const Text(
+              "Sarah Yoon",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            const Text(
               "QA / Mobile & Web",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-            const SizedBox (height: 30),
+            const SizedBox(height: 30),
             FilledButton.icon(
-              onPressed: () {
-
-              },
-              icon: const Icon (Icons.explore),
+              onPressed: () {},
+              icon: const Icon(Icons.explore),
               label: const Text("Explore"),
-            )
-          ]
-        )
-      )
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
