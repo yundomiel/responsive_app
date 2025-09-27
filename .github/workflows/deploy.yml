@@ -17,32 +17,47 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - run: flutter pub get
+      - name: Pub get
+        run: flutter pub get
 
       
-      - run: flutter build web --release --base-href /responsive_app/ --pwa-strategy=none
+      - name: Build web
+        run: flutter build web --release --base-href /responsive_app/ --pwa-strategy=none
 
-      
-      - run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
-      - run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js
-      - run: cp build/web/index.html build/web/404.html
+      - name: Force correct <base href>
+        run: sed -i 's#<base href="[^"]*"#<base href="/responsive_app/"#' build/web/index.html
 
-      
-      - run: |
+     
+      - name: Remove service worker
+        run: rm -f build/web/flutter_service_worker.js build/web/flutter_service_worker.js.map
+
+      - name: Disable SW registration in bootstrap
+        run: sed -i 's/serviceWorkerVersion:[^,}]*/serviceWorkerVersion:null/g' build/web/flutter_bootstrap.js
+
+     
+      - name: Add 404.html
+        run: cp build/web/index.html build/web/404.html
+
+   
+      - name: List build output (debug)
+        run: |
           grep -n "<base" build/web/index.html || true
-          ls -l build/web | sed -n '1,80p'
+          ls -l build/web | sed -n '1,120p'
 
       
-      - uses: actions/configure-pages@v5
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
-    
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
 
