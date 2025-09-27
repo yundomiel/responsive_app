@@ -30,7 +30,11 @@ jobs:
 
       
       - name: Build web (HTML renderer)
-        run: flutter build web --release --web-renderer html --base-href /responsive_app/ --pwa-strategy=none
+        run: |
+          flutter build web --release \
+          --base-href /responsive_app/ \
+          --pwa-strategy=none \
+            --dart-define=FLUTTER_WEB_RENDERER=htmㅣ
 
       - name: Force correct <base href>
         run: sed -i 's#<base href="[^"]*"#<base href="/responsive_app/"#' build/web/index.html
